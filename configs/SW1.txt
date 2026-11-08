@@ -1,0 +1,39 @@
+! SW1 - one access switch for staff, CCTV and the security office
+hostname SW1
+no ip domain-lookup
+vlan 10
+ name STAFF
+vlan 20
+ name CCTV
+vlan 30
+ name SECURITY
+!
+interface fa0/1
+ description Trunk to R1
+ switchport mode trunk
+!
+! Cameras: one device per port, learn it and keep it, drop and log anything else
+interface range fa0/2 - 4
+ description IP camera
+ switchport mode access
+ switchport access vlan 20
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ spanning-tree portfast
+interface fa0/5
+ description NVR recorder
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast
+interface range fa0/6 - 7
+ description Staff PC
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+interface fa0/8
+ description Security office PC
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast
